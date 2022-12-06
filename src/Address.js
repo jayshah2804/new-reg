@@ -4,8 +4,10 @@ import "./Address.css";
 
 let lat;
 let lng;
+let current = "";
 const Address = (props) => {
-  const addressRef = useRef();
+  const pickupAddressRef = useRef();
+  const dropAddressRef = useRef();
   const script = document.createElement("script");
   script.src =
     "https://maps.googleapis.com/maps/api/js?key=AIzaSyAq88vEj-mQ9idalgeP1IuvulowkkFA-Nk&callback=initMap&libraries=places&v=weekly";
@@ -56,7 +58,9 @@ const Address = (props) => {
           infowindowContent.children["place-address"].textContent =
             value[0].formatted_address;
           infowindowContent.children["place-name"].textContent = "";
-          addressRef.current.value = value[0].formatted_address;
+          if (current === "pickup")
+            pickupAddressRef.current.value = value[0].formatted_address;
+          else dropAddressRef.current.value = value[0].formatted_address;
           addressChangeHandler();
         }
       );
@@ -99,10 +103,10 @@ const Address = (props) => {
   window.initMap = initMap;
 
   const addressChangeHandler = () => {
-    setTimeout(() => {
-      if (addressRef.current.value)
-        props.addressEntered(addressRef.current.value, lat, lng);
-    }, 500);
+    // setTimeout(() => {
+    //   if (addressRef.current.value)
+    //     props.addressEntered(addressRef.current.value, lat, lng);
+    // }, 500);
   };
 
   return (
@@ -114,17 +118,19 @@ const Address = (props) => {
         <input
           id="pac-input1"
           type="text"
-          ref={addressRef}
+          ref={pickupAddressRef}
           placeholder="Enter a location"
           className="tags address"
+          onChange={() => (current = "pickup")}
           onBlur={addressChangeHandler}
         />
         <input
           id="pac-input2"
           type="text"
-          //   ref={addressRef}
+          ref={dropAddressRef}
           placeholder="Enter a location"
           className="tags address"
+          onChange={() => (current = "drop")}
           //   onBlur={addressChangeHandler}
         />
       </div>
